@@ -2,14 +2,30 @@ function stwp_send_to_webhook(username, url) {
     stwp_just_fucking_send_it(username, url).then(console.log("Sent!")).catch(console.warn);
 }
 
+function stwp_get_prompts() {
+    const gr = gradioApp();
+
+    /** @type {HTMLTextAreaElement} */
+    const prompt = gr.querySelector("#txt2img_prompt > label > textarea");
+    /** @type {HTMLTextAreaElement} */
+    const negativePrompt = gr.querySelector("#txt2img_neg_prompt > label > textarea")
+
+    return {
+        prompt: prompt.value,
+        negativePrompt: negativePrompt.value
+    }
+}
+
 async function stwp_just_fucking_send_it(username, url) {
     const imageData = await stwp_steal_image_from_gallery();
     const imageFile = stwp_make_it_quack(imageData);
     const image = await imageFile.arrayBuffer();
 
+    const prompts = stwp_get_prompts();
+
     const formData = new FormData();
     formData.append("payload_json", JSON.stringify({
-        content: "New image",
+        content: `A new image just dropped\nPrompt:\`\`\`${prompts.prompt}\`\`\`\nNegative:\`\`\`${prompts.negativePrompt}\`\`\``,
         username: username,
         file: "image.png",
     }));
