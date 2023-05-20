@@ -1,0 +1,5 @@
+# disable E501
+
+[flake8]
+ignore = E501
+max-line-length = 9999
