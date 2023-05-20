@@ -1,3 +1,10 @@
+window.stwp = {
+    latestPrompts: {
+        prompt: "",
+        negativePrompt: ""
+    }
+};
+
 function stwp_send_to_webhook(username, url) {
     stwp_just_fucking_send_it(username, url).then(console.log("Sent!")).catch(console.warn);
 }
@@ -22,10 +29,23 @@ async function stwp_just_fucking_send_it(username, url) {
     const image = await imageFile.arrayBuffer();
 
     const prompts = stwp_get_prompts();
+    let resendPrompts = false;
+
+    if (window.stwp.latestPrompts !== prompts) {
+        window.stwp.latestPrompts = prompts;
+        resendPrompts = true;
+    }
 
     const formData = new FormData();
+
+    let content = "A new image just dropped!";
+
+    if (resendPrompts) {
+        content += `\nPrompt:\`\`\`${prompts.prompt}\`\`\` Negative:\`\`\`${prompts.negativePrompt}\`\`\``;
+    }
+
     formData.append("payload_json", JSON.stringify({
-        content: `A new image just dropped\nPrompt:\`\`\`${prompts.prompt}\`\`\` Negative:\`\`\`${prompts.negativePrompt}\`\`\``,
+        content,
         username: username,
         file: "image.png",
     }));
@@ -37,7 +57,7 @@ async function stwp_just_fucking_send_it(username, url) {
     });
 
     if (!response.ok) {
-        throw new Error(`Failed to send image to webhook: ${response.status} ${response.statusText}`);
+        throw new Error(`Failed to send image to webhook: ${response.status} ${response.statusText} `);
     }
 }
 
