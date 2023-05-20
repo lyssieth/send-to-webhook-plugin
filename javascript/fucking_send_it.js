@@ -25,7 +25,7 @@ async function stwp_just_fucking_send_it(username, url) {
 
     const formData = new FormData();
     formData.append("payload_json", JSON.stringify({
-        content: `A new image just dropped\nPrompt:\`\`\`${prompts.prompt}\`\`\`\nNegative:\`\`\`${prompts.negativePrompt}\`\`\``,
+        content: `A new image just dropped\nPrompt:\`\`\`${prompts.prompt}\`\`\` Negative:\`\`\`${prompts.negativePrompt}\`\`\``,
         username: username,
         file: "image.png",
     }));
